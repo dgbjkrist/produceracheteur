@@ -1,11 +1,26 @@
 let producers = require('./mock-producersbuyers')
 const {success, getUniqId} = require('./helper')
+const {Sequelize} = require('sequelize')
 const bodyParser = require('body-parser')
 const morgan = require('morgan')
 const favicon = require('serve-favicon')
 const express = require('express')
 const app = express()
 const port = 3000
+
+const sequelize = new Sequelize(
+    'producer_buyer',
+    'admin',
+    'admin',
+    {
+        host: 'localhost',
+        dialect: 'mysql'
+    }
+)
+
+sequelize.authenticate()
+    .then(_ => console.log('la connection a la base de données a été succes'))
+    .catch(error => console.error('error'+error))
 
 app
     .use(favicon(__dirname + '/favicon.ico'))
