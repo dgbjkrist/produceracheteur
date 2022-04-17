@@ -1,67 +1,23 @@
-let producers = require('./mock-producersbuyers')
-const {success, getUniqId} = require('./helper')
-const {Sequelize} = require('sequelize')
 const bodyParser = require('body-parser')
 const morgan = require('morgan')
 const favicon = require('serve-favicon')
 const express = require('express')
+const sequelize = require('./src/db/sequelize')
+
 const app = express()
 const port = 3000
-
-const sequelize = new Sequelize(
-    'producer_buyer',
-    'admin',
-    'admin',
-    {
-        host: 'localhost',
-        dialect: 'mysql'
-    }
-)
-
-sequelize.authenticate()
-    .then(_ => console.log('la connection a la base de données a été succes'))
-    .catch(error => console.error('error'+error))
 
 app
     .use(favicon(__dirname + '/favicon.ico'))
     .use(morgan('dev'))
     .use(bodyParser.json())
 
-app.get('/', (req, res) => {
-    res.send('hello djegba et blalblalblaaaaa')
-})
+sequelize.initDb()
 
-app.get('/api/producers', (req, res) => {
-    //const producers = producers.all()
-    const message = `nous avons retourner ${producers.length} producteurs`
-    res.json(success(message, producers))
-})
-
-app.get('/api/producers/:id', (req, res) => {
-    let id = parseInt(req.params.id)
-    let producer = producers.find(producer => producer.id === id)
-    let message = `vous avez demandé le producteur ${producer.name}`
-    //res.send(`vous avez demandé le producteur ${producer.name}`)
-    res.json(success(message, producer))
-})
-
-app.post('/api/producers', (req, res) => {
-    const producer = {...req.body, ...{id: getUniqId(producers), created: new Date()}}
-    producers.push(producer)
-    const message = `le producer ${producer.name} a ete ajouté`
-    res.json(success(message, producer))
-})
-
-app.put('/api/producers/:id', (req, res) => {
-    let id = parseInt(req.params.id)
-    let producerUpdated = {...req.body, id: id}
-    producers = producers.map(producer => {
-        return producer.id === id ? producerUpdated : producer
-    })
-
-    const message = `le producteur ${producerUpdated.name} a bien été modifié`
-
-    res.json(success(message, producerUpdated))
-})
+require('./src/routes/findAll')(app)
+require('./src/routes/findProducerByPk')(app)
+require('./src/routes/createProducer')(app)
+require('./src/routes/updateProducer')(app)
+require('./src/routes/deleteProducer')(app)
 
 app.listen(port, () => console.log(`producteuracheteur running on port http://localhost:${port}`))
