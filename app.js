@@ -20,4 +20,9 @@ require('./src/routes/createProducer')(app)
 require('./src/routes/updateProducer')(app)
 require('./src/routes/deleteProducer')(app)
 
+app.use(({res}) => {
+    const message = 'Impossible de trouver la ressource demandée ! Essayez une autre url'
+    res.status(404).json({message})
+})
+
 app.listen(port, () => console.log(`producteuracheteur running on port http://localhost:${port}`))
