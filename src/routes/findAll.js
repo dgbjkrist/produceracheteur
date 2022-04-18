@@ -5,6 +5,9 @@ module.exports = (app) => {
         ProducerModel.findAll().then(r => {
             const message = 'La liste des producteurs.'
             res.json({message, data: r})
-        }).catch(error => console.log(error))
+        }).catch(error => {
+            const message = `La liste des producteurs n'a pas pu être recup, veuillez ressayer`
+            res.status(500).json({message, data: error})
+        })
     })
 }
