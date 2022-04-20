@@ -2,12 +2,13 @@ let producers = require('./mock-producersbuyers')
 const {Sequelize, DataTypes} = require('sequelize')
 
 const sequelize = new Sequelize(
-    'producer_buyer',
+    'producteuracheteur',
     'admin',
     'admin',
     {
         host: 'localhost',
-        dialect: 'mysql'
+        dialect: 'mysql',
+        port: 3336
     }
 )
 
