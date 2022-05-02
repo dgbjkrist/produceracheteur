@@ -1,0 +1,49 @@
+services:
+  mysqldb:
+    image: mysql:8.0
+    command:
+      - --default-authentication-plugin=mysql_native_password
+    restart: unless-stopped
+    ports:
+      - 3336:3306
+    volumes:
+      - db:/var/lib/mysql
+    expose:
+      - 3336
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_PASSWORD: admin
+      MYSQL_USER: admin
+      MYSQL_DATABASE: producteuracheteur
+    networks:
+      - internalnet
+
+  nodeapp:
+    depends_on:
+      - mysqldb
+    build:
+      .
+    restart: unless-stopped
+    ports:
+      - 3000:3000
+    expose:
+      - 3000
+    environment:
+      DB_HOST: mysqldb
+      DB_USER: 'admin'
+      DB_PASSWORD: 'admin'
+      DB_NAME: 'producteuracheteur'
+      DB_PORT: 3306
+      DB_CONNECTION_LIMIT: 20
+      SERVICE_TAGS: prod
+      SERVICE_NAME: nodeappservice
+      SERVER_PORT: 3000
+    networks:
+      - internalnet
+
+volumes:
+  db:
+
+networks:
+  internalnet:
+    driver: bridge
