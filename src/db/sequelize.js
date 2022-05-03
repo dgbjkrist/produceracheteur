@@ -1,5 +1,6 @@
 let producers = require('./mock-producersbuyers')
 const {Sequelize, DataTypes} = require('sequelize')
+const bcrypt = require("bcrypt");
 
 const sequelize = new Sequelize(
     'producteuracheteur',
@@ -14,9 +15,10 @@ const sequelize = new Sequelize(
 
 sequelize.authenticate()
     .then(_ => console.log('la connection a la base de données a été succes'))
-    .catch(error => console.error('error'+error))
+    .catch(error => console.error('error '+error))
 
 const ProducerModel = require('./../models/producer')(sequelize, DataTypes)
+const UserModel = require('./../models/user')(sequelize, DataTypes)
 
 const initDb = () => {
     return sequelize.sync({force: true})
@@ -30,9 +32,16 @@ const initDb = () => {
                     cp: producer.cp,
                     picture: producer.picture,
                     types: producer.types
-                }).then(kokora => console.log(kokora.name))
+                }).then(createdProducer => console.log(createdProducer.name))
             })
+
+            UserModel.create({
+                email: 'kokora@gmail.com',
+                password: bcrypt.hashSync('kokora', 8)
+            })
+
+
         })
 }
 
-module.exports = {initDb, ProducerModel}
+module.exports = {initDb, ProducerModel, UserModel}

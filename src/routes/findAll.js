@@ -1,7 +1,8 @@
 const { ProducerModel } = require('./../db/sequelize')
+const authJwt = require('../auth/auth_jwt')
 
 module.exports = (app) => {
-    app.get('/api/producers', (req, res) => {
+    app.get('/api/producers', authJwt, (req, res) => {
         ProducerModel.findAll().then(r => {
             const message = 'La liste des producteurs.'
             res.json({message, data: r})

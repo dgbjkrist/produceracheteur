@@ -19,6 +19,7 @@ require('./src/routes/findProducerByPk')(app)
 require('./src/routes/createProducer')(app)
 require('./src/routes/updateProducer')(app)
 require('./src/routes/deleteProducer')(app)
+require('./src/routes/login')(app)
 
 app.use(({res}) => {
     const message = 'Impossible de trouver la ressource demandée ! Essayez une autre url'
